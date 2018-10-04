@@ -1,0 +1,65 @@
+%{
+#include<stdio.h>
+#include<stdlib.h>
+typedef union
+{
+
+    int d;
+    double lf;
+} type_union;
+#define YYSTYPE type_union
+
+%}
+
+%token NUM FLT ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA
+
+%left ADD SUB
+%left MUL DIV
+%right UMINUS
+
+%%
+stmts : stmts intexpr EOL {
+            printf("=%d\n",$2.d);
+}
+        |stmts fltexpr EOL {
+            printf("=%lf\n",$2.lf);
+        }
+        |stmts EOL 
+        |%empty
+;
+intexpr : intexpr ADD intexpr           { $$.d=$1.d+$3.d;}
+       |intexpr SUB intexpr       { $$.d=$1.d-$3.d;}
+       |intexpr MUL intexpr       { $$.d=$1.d*$3.d;}
+       |intexpr DIV intexpr       { $$.d=$1.d/$3.d;}
+       |SUB intexpr %prec UMINUS     {$$.d=-$2.d;}
+       | LEFTBRA intexpr RIGHTBRA    {$$.d=$2.d;}
+       |NUM                    
+;
+fltexpr : fltexpr ADD fltexpr           { $$.lf = $1.lf + $3.lf;}
+       |fltexpr SUB fltexpr             { $$.lf = $1.lf - $3.lf;}
+       |fltexpr MUL fltexpr             { $$.lf = $1.lf * $3.lf;}
+       |fltexpr DIV fltexpr             { $$.lf = $1.lf / $3.lf;}
+       |SUB fltexpr %prec UMINUS        { $$.lf = -$2.lf;}
+       | LEFTBRA fltexpr RIGHTBRA       { $$.lf = $2.lf;}
+       |FLT
+       |fltexpr ADD intexpr           { $$.lf = $1.lf + $3.d;}
+       |fltexpr SUB intexpr             { $$.lf = $1.lf - $3.d;}
+       |fltexpr MUL intexpr             { $$.lf = $1.lf * $3.d;}
+       |fltexpr DIV intexpr             { $$.lf = $1.lf / $3.d;}
+       |intexpr ADD fltexpr             { $$.lf = $1.d + $3.lf;}
+       |intexpr SUB fltexpr             { $$.lf = $1.d - $3.lf;}
+       |intexpr MUL fltexpr             { $$.lf = $1.d * $3.lf;}
+       |intexpr DIV fltexpr             { $$.lf = $1.d / $3.lf;}
+       
+%%
+int main()
+{
+  yyparse();
+  return 0;
+}
+
+int yyerror(char *msg)
+{
+  printf("Error encountered: %s \n", msg);
+}
+

@@ -1,0 +1,45 @@
+%{
+    
+#include<stdlib.h>
+typedef union
+{
+
+    int d;
+    double lf;
+} type_union;
+#define YYSTYPE type_union
+#include "y.tab.h"
+
+%}
+
+blank [ \t]+
+flt ([0-9]+\.[0-9]+)|(\.[0-9]+)|([0-9]+\.)
+num [0-9]+
+add \+
+sub -
+mul \*
+div \/
+eol \n
+leftbra "("
+rightbra ")"
+%%
+{blank}    {}
+{flt}    {yylval.lf = atof(yytext);
+return FLT;
+}
+{num}    {yylval.d = atoi(yytext);
+return NUM;
+}
+{add}    {return ADD;}
+{sub}    {return SUB;}
+{mul}    {return MUL;}
+{div}    {return DIV;}
+{eol}    {return EOL;}
+{leftbra}    {return LEFTBRA;}
+{rightbra}    {return RIGHTBRA;}
+%%
+
+int yywrap()
+{
+    return 1;
+}
