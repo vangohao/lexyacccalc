@@ -13,7 +13,7 @@ add \+
 sub -
 mul \*
 div \/
-eol \n
+eol [\n;]
 leftbra "("
 rightbra ")"
 assign "="
@@ -38,7 +38,8 @@ return NUM;
 {assign}        {return ASSIGN;}
 {ident}         {yylval.name = strdup(yytext);return ID;}
 
-. {return ILLEGAL;}
+[^\n;]*[^A-Za-z_0-9.\-+*/= \t\n;]+[^\n;]* {return ILLEGAL;}
+. {return DOT;}
 %%
 
 int yywrap()

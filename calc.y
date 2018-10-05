@@ -31,7 +31,7 @@
   {
   int yyparse(void);
   int yylex(void);  
-  int yyerror(char *);
+  int yyerror(const char *);
   int yywrap();
   }
 }
@@ -93,15 +93,16 @@
 
 
 
-int yyerror(char *msg)
+int yyerror(const char *msg)
 {
   printf("Error encountered: %s \n", msg);
+  return 0;
 }
 
 
 }
 
-%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL
+%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL DOT
 
 %token <unit> NUM
 %token <unit> FLT
@@ -124,7 +125,8 @@ stmts : stmts expr EOL {
             else if($2.type == valtype::DOUBLE) printf("%lf\n",$2.value.lf);
 }
         |stmts EOL 
-        |error EOL {yyerror("Syntax Error!");yyerrok;}
+        |error EOL {yyerrok;yyclearin;}
+        |stmts illegal EOL {}
         |%empty
 ;
 expr : expr ADD expr     { $$=calc($1,$3,ADD);}
@@ -141,7 +143,7 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
            char ch[500];
            sprintf(ch,"identifier %s not defined!",$1);
            yyerror(ch);
-           yyerrok;
+           YYERROR;
          }
          else
          {
@@ -152,7 +154,7 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
 assignexpr : ID ASSIGN expr       { idmp[$1]=$3;$$=$3;}
           | ID ASSIGN assignexpr {idmp[$1]=$3;$$=$3;}
 ;
-illegal : ILLEGAL {yyerror("Illegal Character!");yyerrok;}
+illegal : ILLEGAL {yyerror("Illegal Character!");}
        
 %%
 
