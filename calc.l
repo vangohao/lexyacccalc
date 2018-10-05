@@ -4,7 +4,7 @@
 #include "y.tab.h"
 
 %}
-
+quit quit
 alpha [A-Za-z_]
 blank [ \t]+
 flt ([0-9]+\.[0-9]+)|(\.[0-9]+)|([0-9]+\.)
@@ -36,6 +36,7 @@ return NUM;
 {leftbra}    {return LEFTBRA;}
 {rightbra}    {return RIGHTBRA;}
 {assign}        {return ASSIGN;}
+{quit}          {return QUIT;}
 {ident}         {yylval.name = strdup(yytext);return ID;}
 
 [^\n;]*[^A-Za-z_0-9.\-+*/= \t\n;]+[^\n;]* {return ILLEGAL;}

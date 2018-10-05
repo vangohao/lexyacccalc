@@ -102,7 +102,7 @@ int yyerror(const char *msg)
 
 }
 
-%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL DOT
+%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL DOT QUIT
 
 %token <unit> NUM
 %token <unit> FLT
@@ -127,6 +127,7 @@ stmts : stmts expr EOL {
         |stmts EOL 
         |error EOL {yyerrok;yyclearin;}
         |stmts illegal EOL {}
+        |stmts QUIT EOL {exit(0);}
         |%empty
 ;
 expr : expr ADD expr     { $$=calc($1,$3,ADD);}
