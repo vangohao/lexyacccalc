@@ -109,13 +109,17 @@ int yyerror(char *msg)
 %type <unit> expr
 %type <unit> assignexpr
 
-%left ASSIGN
+%right ASSIGN
 %left ADD SUB
 %left MUL DIV
 %right UMINUS
 
 %%
 stmts : stmts expr EOL {
+            if($2.type == valtype::INT)  printf("%d\n",$2.value.d); 
+            else if($2.type == valtype::DOUBLE) printf("%lf\n",$2.value.lf);
+}
+|stmts assignexpr EOL {
             if($2.type == valtype::INT)  printf("%d\n",$2.value.d); 
             else if($2.type == valtype::DOUBLE) printf("%lf\n",$2.value.lf);
 }
@@ -143,10 +147,10 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
          {
            $$=it->second;
          }
-       }      
-       |assignexpr           
+       }          
 ;
 assignexpr : ID ASSIGN expr       { idmp[$1]=$3;$$=$3;}
+          | ID ASSIGN assignexpr {idmp[$1]=$3;$$=$3;}
 ;
 illegal : ILLEGAL {yyerror("Illegal Character!");yyerrok;}
        
