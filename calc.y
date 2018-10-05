@@ -4,14 +4,7 @@
 #include<vector>
 #include<string>
 #include<unordered_map>
-}
 
-%union{
-    var unit;
-    char * name;
-}
-
-%code requires{ 
   typedef union
   {
       int d;
@@ -34,6 +27,11 @@
   int yyerror(const char *);
   int yywrap();
   }
+}
+
+%union{
+    var unit;
+    char * name;
 }
 
 %code{
@@ -113,7 +111,7 @@ int yyerror(const char *msg)
 %right ASSIGN
 %left ADD SUB
 %left MUL DIV
-%right UMINUS
+%right NEGA
 
 %%
 stmts : stmts expr EOL {
@@ -126,7 +124,7 @@ stmts : stmts expr EOL {
 }
         |stmts EOL 
         |error EOL {yyerrok;yyclearin;}
-        |stmts illegal EOL {}
+        |stmts ILLEGAL EOL {yyerror("Illegal Character!");}
         |stmts QUIT EOL {exit(0);}
         |%empty
 ;
@@ -134,7 +132,7 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
        |expr SUB expr       { $$=calc($1,$3,SUB);}
        |expr MUL expr       { $$=calc($1,$3,MUL);}
        |expr DIV expr       { $$=calc($1,$3,DIV);}
-       |SUB expr %prec UMINUS     {$$=negative($2);}
+       |SUB expr %prec NEGA     {$$=negative($2);}
        | LEFTBRA expr RIGHTBRA    {$$=$2;}
        |NUM   
        |FLT 
@@ -155,8 +153,6 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
 ;
 assignexpr : ID ASSIGN expr       { idmp[$1]=$3;$$=$3;}
           | ID ASSIGN assignexpr {idmp[$1]=$3;$$=$3;}
-;
-illegal : ILLEGAL {yyerror("Illegal Character!");}
        
 %%
 

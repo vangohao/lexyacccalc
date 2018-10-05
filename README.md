@@ -40,11 +40,11 @@ make
 3./2
 1.500000
 
-a=3*1
-3
+a=3*-1
+-3
 
 a+5
-8
+2
 
 b+3
 Error encountered: identifier b not defined!
@@ -65,12 +65,41 @@ Error encountered: syntax error
 quit
 ```
 
-##代码结构
+## 代码结构
 代码由两个文件组成:calc.l和calc.y
 
-###calc.
-用于创建词法分析器,主要的token有运算符、整数、浮点数、标识符、分隔符、quit以及含有非法字符的语句
+### calc.l
+由三部分组成:#include 部分,词法规则,附加代码.
 
-结构
+第一部分包含了bison生成的y.tab.h,其中有一些类型的定义和token宏的定义.
 
-calc.y 用于进行语法制导,
+第二部分为词法规则,主要的token有运算符、整数、浮点数、标识符、分隔符、quit以及含有非法字符的语句.
+
+第三部分为附加代码,只有yywrap()函数.
+### calc.y
+由三部分组成:类型定义、token声明和附加声明和定义,语法规则,附加代码
+
+第一部分有
+
+%code requires部分会被附加到y.tab.h中,包含需要include的库,自定义的结构体,yy系列函数的声明.
+(%code requires的作用查阅自Gnu Bison文档)
+
+%union部分,定义YYSTYPE为union类型.
+(%union的作用查阅自Gnu Bison文档)
+
+%code部分,包含一个全局变量和所需函数的定义.
+
+全局变量为一个作为符号表的unordered_map,键类型为string,值类型为一个包含type和value的结构体,其中type代表变量是实数还是整数,value是一个union,储存变量的值.
+
+所需函数有用于进行单步运算的calc函数和negative函数,以及用于报错的yyerror函数.
+
+然后是token的声明和类型定义,以及部分非终结符号的类型定义.
+
+接下来%right 和 %left 声明运算符的结合性和优先级顺序
+(%right %left 和 %prec 的作用和优先顺序查阅自Gnu Bison文档)
+
+第二部分是语法定义,设置了三个非终结符,stmts expr 和 assignexpr.
+
+stmts是多条语句 expr是单条非赋值语句 assignexpr是单条赋值语句.
+
+第三部分为附加代码,包含main函数.
