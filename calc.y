@@ -102,7 +102,7 @@ int yyerror(const char *msg)
 
 }
 
-%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL DOT QUIT
+%token ADD SUB MUL DIV EOL LEFTBRA RIGHTBRA ASSIGN ILLEGAL QUIT DOT
 
 %token <unit> NUM
 %token <unit> FLT
@@ -137,6 +137,7 @@ expr : expr ADD expr     { $$=calc($1,$3,ADD);}
        |SUB expr %prec UMINUS     {$$=negative($2);}
        | LEFTBRA expr RIGHTBRA    {$$=$2;}
        |NUM   
+       |FLT 
        |ID                    {
          auto it = idmp.find($1);
          if(it==idmp.end())

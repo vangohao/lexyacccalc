@@ -40,7 +40,7 @@ return NUM;
 {ident}         {yylval.name = strdup(yytext);return ID;}
 
 [^\n;]*[^A-Za-z_0-9.\-+*/= \t\n;]+[^\n;]* {return ILLEGAL;}
-. {return DOT;}
+\. {return DOT;}
 %%
 
 int yywrap()
