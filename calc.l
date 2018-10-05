@@ -20,11 +20,11 @@ assign "="
 ident {alpha}+
 %%
 {blank}    {}
-{flt}    {yylval.unit.value.lf = atof(yytext);
+{flt}    {yylval.unit.value.lf = atof(yytext);     //浮点数
 yylval.unit.type = valtype::DOUBLE;
 return FLT;
 }
-{num}    {yylval.unit.value.d = atoi(yytext);
+{num}    {yylval.unit.value.d = atoi(yytext);     //整数
 yylval.unit.type = valtype::INT;
 return NUM;
 }
@@ -37,10 +37,10 @@ return NUM;
 {rightbra}    {return RIGHTBRA;}
 {assign}        {return ASSIGN;}
 {quit}          {return QUIT;}
-{ident}         {yylval.name = strdup(yytext);return ID;}
+{ident}         {yylval.name = strdup(yytext);return ID;}   //标识符
 
-[^\n;]*[^A-Za-z_0-9.\-+*/= \t\n;]+[^\n;]* {return ILLEGAL;}
-\. {return DOT;}
+[^\n;]*[^A-Za-z_0-9.\-+*/= \t\n;]+[^\n;]* {return ILLEGAL;}  //含有非法字符的语句
+\. {return DOT;}                                              //独立的.号
 %%
 
 int yywrap()

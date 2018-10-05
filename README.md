@@ -82,10 +82,10 @@ quit
 第一部分有
 
 %code requires部分会被附加到y.tab.h中,包含需要include的库,自定义的结构体,yy系列函数的声明.
-(%code requires的作用查阅自Gnu Bison文档)
+(%code requires的作用查阅自[Gnu Bison文档](http://www.gnu.org/software/bison/manual/bison.html)
 
 %union部分,定义YYSTYPE为union类型.
-(%union的作用查阅自Gnu Bison文档)
+(%union的作用查阅自[Gnu Bison文档](http://www.gnu.org/software/bison/manual/bison.html)
 
 %code部分,包含一个全局变量和所需函数的定义.
 
@@ -96,7 +96,7 @@ quit
 然后是token的声明和类型定义,以及部分非终结符号的类型定义.
 
 接下来%right 和 %left 声明运算符的结合性和优先级顺序
-(%right %left 和 %prec 的作用和优先顺序查阅自Gnu Bison文档)
+(%right %left 和 %prec 的作用和优先顺序查阅自[Gnu Bison文档](http://www.gnu.org/software/bison/manual/bison.html)
 
 第二部分是语法定义,设置了三个非终结符,stmts expr 和 assignexpr.
 
